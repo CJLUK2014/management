@@ -1,15 +1,19 @@
 import discord
 from discord.ext import commands
+import os
+from dotenv import load_dotenv
 
-# You'll need to set your bot's token here!
-TOKEN = 'YOUR_DISCORD_BOT_TOKEN'
+load_dotenv()
+
+# Get the bot token and log channel ID from environment variables
+TOKEN = os.getenv('BOT_TOKEN')
+LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
 
 PREFIX = '!'
 bot = commands.Bot(command_prefix=PREFIX, intents=discord.Intents.all())
 
 team_members = {}
 orders = {}
-LOG_CHANNEL_ID = 123456789012345678  # Replace with your log channel ID
 
 @bot.event
 async def on_ready():
@@ -23,7 +27,7 @@ async def register(ctx, member: discord.Member, *, role: str):
     team_members[user_id] = role
     await ctx.send(f"Registered {member.mention} as a {role}!", delete_after=5)
 
-    log_channel = bot.get_channel(LOG_CHANNEL_ID)
+    log_channel = bot.get_channel(int(LOG_CHANNEL_ID)) # Make sure LOG_CHANNEL_ID is treated as a number
     if log_channel:
         log_embed = discord.Embed(title="[ Command has been used ]", color=discord.Color.green())
         log_embed.add_field(name="- !register has been used!", value=f"- The administrator was {ctx.author.mention}", inline=False)
@@ -65,7 +69,7 @@ async def addorder(ctx, id: str, *, details: str):
     orders[id] = order_info
     await ctx.send(f"Order {id} added with status: New", delete_after=5)
 
-    log_channel = bot.get_channel(LOG_CHANNEL_ID)
+    log_channel = bot.get_channel(int(LOG_CHANNEL_ID)) # Make sure LOG_CHANNEL_ID is treated as a number
     if log_channel:
         log_embed = discord.Embed(title="[ Command has been Used ]", color=discord.Color.blue())
         log_embed.add_field(name="- !addorder Has been used.", value=f"- The person was {ctx.author.mention}", inline=False)
@@ -93,7 +97,7 @@ async def assignorder(ctx, id: str, member: discord.Member):
     orders[id]["assigned_to"] = member.id
     await ctx.send(f"Order {id} has been assigned to {member.mention}!", delete_after=5)
 
-    log_channel = bot.get_channel(LOG_CHANNEL_ID)
+    log_channel = bot.get_channel(int(LOG_CHANNEL_ID)) # Make sure LOG_CHANNEL_ID is treated as a number
     if log_channel:
         log_embed = discord.Embed(title="[ Command has been Used ]", color=discord.Color.gold())
         log_embed.add_field(name="- !assignorder Has been used.", value=f"- The person was {ctx.author.mention}", inline=False)
@@ -135,5 +139,15 @@ async def say(ctx, *, message):
     await ctx.send(message)
     await ctx.message.delete(delay=1)
 
-# Remember to replace 'YOUR_DISCORD_BOT_TOKEN' with your actual bot token!
-bot.run(TOKEN)
+# Load environment variables
+load_dotenv()
+
+# Get the bot token and log channel ID from environment variables
+TOKEN = os.getenv('BOT_TOKEN')
+LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+
+# Make sure the bot runs with the token from the environment
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("Error: BOT_TOKEN environment variable not set!")
