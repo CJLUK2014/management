@@ -293,12 +293,4 @@ async def poll(ctx, question: str, *options):
     poll_message = await ctx.send(embed=embed)
     for i in range(len(options)):
         await poll_message.add_reaction(reactions[i])
-    await ctx.message.delete(delay=1)
-
-@bot.command()
-async def commands(ctx):
-    help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
-    help_embed.add_field(name="!!team",
-    bot.run(TOKEN)
-else:
-    print("Error: BOT_TOKEN environment variable not set!")
+    await
