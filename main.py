@@ -154,18 +154,27 @@ async def say(ctx, *, message):
     await ctx.send(message)
     await ctx.message.delete(delay=1)
 
+@bot.command()
+async def help(ctx):
+    """Shows a list of available commands and their required permissions."""
+    help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
+    help_embed.add_field(name="!!team", value="Shows the list of registered team members.", inline=False)
+    help_embed.add_field(name="!!checkorder <id>", value="Checks the details and status of a specific order.", inline=False)
+    help_embed.add_field(name="!!say <message>", value="Makes the bot say the message and deletes your command.", inline=False)
+    help_embed.add_field(name="!!register <member> <role>", value="Registers a member as part of the team. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!addorder <id> <details>", value="Adds a new order to the system. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!orderstatus <id> <status>", value="Updates the status of an existing order. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!assignorder <id> <member>", value="Assigns an order to a specific team member. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!announcement <channel_id> <message>", value="Sends an announcement to a specific channel. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!help", value="Shows this list of commands.", inline=False)
+    await ctx.send(embed=help_embed)
+
 # Load environment variables
 load_dotenv()
 
 # Get the bot token and log channel ID from environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
-
-# Make sure the bot runs with the token from the environment
-if TOKEN:
-    bot.run(TOKEN)
-else:
-    print("Error: BOT_TOKEN environment variable not set!")
 
 # Make sure the bot runs with the token from the environment
 if TOKEN:
