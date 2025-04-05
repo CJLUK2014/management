@@ -9,24 +9,32 @@ load_dotenv()
 # Get the bot token and log channel ID from environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+TEAM_DATA_VAR = os.getenv('TEAM_MEMBERS_JSON') # Name of the Railway environment variable
 
 PREFIX = '!!'
 bot = commands.Bot(command_prefix=PREFIX, intents=discord.Intents.all())
 
-TEAM_FILE = 'team_members.json'
 team_members = {}
 orders = {}
 
+# --- Functions to load and save team data using environment variable ---
 def load_team_data():
-    try:
-        with open(TEAM_FILE, 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
+    team_data_json = os.getenv(TEAM_DATA_VAR)
+    if team_data_json:
+        try:
+            return json.loads(team_data_json)
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON from environment variable '{TEAM_DATA_VAR}'.")
+            return {}
+    else:
         return {}
 
 def save_team_data():
-    with open(TEAM_FILE, 'w') as f:
-        json.dump(team_members, f, indent=4)
+    global team_members
+    team_data_json = json.dumps(team_members)
+    # In a real application, you might need to use the Railway API to update the variable.
+    # For this simpler example, we'll just print it so you can manually set it in Railway.
+    print(f"**IMPORTANT:** Set the Railway environment variable '{TEAM_DATA_VAR}' to this value:\n{team_data_json}")
 
 @bot.event
 async def on_ready():
@@ -215,6 +223,12 @@ load_dotenv()
 # Get the bot token and log channel ID from environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+
+# Make sure the bot runs with the token from the environment
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("Error: BOT_TOKEN environment variable not set!")
 
 # Make sure the bot runs with the token from the environment
 if TOKEN:
