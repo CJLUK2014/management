@@ -9,7 +9,7 @@ load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
 
-PREFIX = '!'
+PREFIX = '!!'
 bot = commands.Bot(command_prefix=PREFIX, intents=discord.Intents.all())
 
 team_members = {}
