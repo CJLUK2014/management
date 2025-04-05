@@ -155,7 +155,7 @@ async def say(ctx, *, message):
     await ctx.message.delete(delay=1)
 
 @bot.command()
-async def help(ctx):
+async def commands(ctx):
     """Shows a list of available commands and their required permissions."""
     help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
     help_embed.add_field(name="!!team", value="Shows the list of registered team members.", inline=False)
@@ -166,7 +166,7 @@ async def help(ctx):
     help_embed.add_field(name="!!orderstatus <id> <status>", value="Updates the status of an existing order. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!assignorder <id> <member>", value="Assigns an order to a specific team member. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!announcement <channel_id> <message>", value="Sends an announcement to a specific channel. **Requires Manage Server permission.**", inline=False)
-    help_embed.add_field(name="!!help", value="Shows this list of commands.", inline=False)
+    help_embed.add_field(name="!!commands", value="Shows this list of commands.", inline=False)
     await ctx.send(embed=help_embed)
 
 # Load environment variables
