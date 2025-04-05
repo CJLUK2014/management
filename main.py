@@ -245,7 +245,7 @@ async def announcement(ctx, channel_id: int, *, message):
 @bot.command()
 async def say(ctx, *, message):
     await ctx.send(message)
-    await ctx.message.delete(delay=1)
+    await ctx.message.delete(delay=1) # Moved the delete command here
 
 @bot.command()
 async def shoutout(ctx, member: discord.Member, *, message: str):
@@ -295,8 +295,8 @@ async def poll(ctx, question: str, *options):
     poll_message = await ctx.send(embed=embed)
     for i in range(len(options)):
         await poll_message.add_reaction(reactions[i])
-    await ctx.message.delete(delay=1)
-await
+    await ctx.message.delete(delay=1) # Let's keep the delete for the poll command too
+
 @bot.command()
 async def commands(ctx):
     help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
