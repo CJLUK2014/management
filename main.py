@@ -9,13 +9,13 @@ load_dotenv()
 
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
-# We don't need this anymore! TEAM_DATA_VAR = os.getenv('TEAM_MEMBERS_JSON')
 
 PREFIX = '!!'
 bot = commands.Bot(command_prefix=PREFIX, intents=discord.Intents.all())
 
 team_members = {}
 orders = {}
+start_time = datetime.datetime.now() # We'll store the time the bot starts
 
 def load_team_data():
     try:
@@ -29,7 +29,7 @@ def load_team_data():
 
 def save_team_data():
     with open('staff.json', 'w') as f:
-        json.dump(team_members, f, indent=4) # The 'indent=4' makes the JSON file easier to read
+        json.dump(team_members, f, indent=4)
 
 async def send_log_message(embed):
     log_channel = bot.get_channel(int(LOG_CHANNEL_ID))
@@ -41,7 +41,9 @@ async def send_log_message(embed):
 @bot.event
 async def on_ready():
     global team_members
+    global start_time # Make sure we can update the global variable
     team_members = load_team_data()
+    start_time = datetime.datetime.now() # Set the start time when the bot is ready
     print(f'Logged in as {bot.user.name}')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="Creative Vivo Designs"))
 
@@ -294,7 +296,7 @@ async def poll(ctx, question: str, *options):
     for i in range(len(options)):
         await poll_message.add_reaction(reactions[i])
     await ctx.message.delete(delay=1)
-
+await
 @bot.command()
 async def commands(ctx):
     help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
@@ -316,7 +318,18 @@ async def commands(ctx):
     help_embed.add_field(name="!!assignorder <id> <member>", value="Assigns an order to a specific team member. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!announcement <channel_id> <message>", value="Sends an announcement to a specific channel. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!commands", value="Shows this list of commands.", inline=False)
+    help_embed.add_field(name="!!uptime", value="Shows how long the bot has been online.", inline=False)
     await ctx.send(embed=help_embed)
+
+@bot.command()
+async def uptime(ctx):
+    """Shows how long the bot has been online."""
+    now = datetime.datetime.now()
+    uptime = now - start_time
+    hours, remainder = divmod(int(uptime.total_seconds()), 3600)
+    minutes, seconds = divmod(remainder, 60)
+    days, hours = divmod(hours, 24)
+    await ctx.send(f"Bot has been online for: {days} days, {hours} hours, {minutes} minutes, and {seconds} seconds!")
 
 load_dotenv()
 TOKEN = os.getenv('BOT_TOKEN')
