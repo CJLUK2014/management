@@ -155,6 +155,26 @@ async def say(ctx, *, message):
     await ctx.message.delete(delay=1)
 
 @bot.command()
+@commands.has_permissions(manage_guild=True)
+async def unregister(ctx, member: discord.Member):
+    """Unregisters a member from the team."""
+    user_id = member.id
+    if user_id in team_members:
+        role = team_members.pop(user_id)
+        await ctx.send(f"Unregistered {member.mention} who was a {role}.", delete_after=5)
+
+        log_channel = bot.get_channel(int(LOG_CHANNEL_ID))
+        if log_channel:
+            log_embed = discord.Embed(title="[ Command has been Used ]", color=discord.Color.orange())
+            log_embed.add_field(name="- !unregister has been used!", value=f"- The administrator was {ctx.author.mention}", inline=False)
+            log_embed.add_field(name="Details:", value=f"- Unregistered member: {member.mention}\n- Previous role: {role}", inline=False)
+            await log_channel.send(embed=log_embed)
+        else:
+            print(f"Error: Log channel not found with ID {LOG_CHANNEL_ID}")
+    else:
+        await ctx.send(f"{member.mention} is not currently registered.", delete_after=5)
+
+@bot.command()
 async def commands(ctx):
     """Shows a list of available commands and their required permissions."""
     help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
@@ -166,6 +186,7 @@ async def commands(ctx):
     help_embed.add_field(name="!!orderstatus <id> <status>", value="Updates the status of an existing order. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!assignorder <id> <member>", value="Assigns an order to a specific team member. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!announcement <channel_id> <message>", value="Sends an announcement to a specific channel. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!unregister <member>", value="Unregisters a member from the team. **Requires Manage Server permission.**", inline=False)
     help_embed.add_field(name="!!commands", value="Shows this list of commands.", inline=False)
     await ctx.send(embed=help_embed)
 
@@ -175,6 +196,12 @@ load_dotenv()
 # Get the bot token and log channel ID from environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+
+# Make sure the bot runs with the token from the environment
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("Error: BOT_TOKEN environment variable not set!")
 
 # Make sure the bot runs with the token from the environment
 if TOKEN:
