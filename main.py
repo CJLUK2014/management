@@ -127,11 +127,26 @@ async def checkorder(ctx, id: str):
 
 @bot.command()
 @commands.has_permissions(manage_guild=True)
-async def announcement(ctx, *, message):
+async def announcement(ctx, channel_id: int, *, message):
+    """Sends an announcement to a specific channel and deletes the command."""
     green_arrow = "<a:greenarrow:1357796907006558208>"
     announcement_text = f"@everyone\n\n{green_arrow}{green_arrow} **Announcement**\n\n{green_arrow} {message}"
-    await ctx.send(announcement_text, delete_after=5)
-    await ctx.message.delete(delay=1)
+
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await channel.send(announcement_text)
+        await ctx.message.delete(delay=2)
+    else:
+        await ctx.send(f"Error: Channel with ID {channel_id} not found.", delete_after=5)
+
+    log_channel = bot.get_channel(int(LOG_CHANNEL_ID))
+    if log_channel:
+        log_embed = discord.Embed(title="[ Command has been Used ]", color=discord.Color.purple())
+        log_embed.add_field(name="- !announcement Has been used.", value=f"- The person was {ctx.author.mention}", inline=False)
+        log_embed.add_field(name="Details:", value=f"- Announced in channel ID: {channel_id}\n- Message: {message}", inline=False)
+        await log_channel.send(embed=log_embed)
+    else:
+        print(f"Error: Log channel not found with ID {LOG_CHANNEL_ID}")
 
 @bot.command()
 async def say(ctx, *, message):
@@ -145,6 +160,12 @@ load_dotenv()
 # Get the bot token and log channel ID from environment variables
 TOKEN = os.getenv('BOT_TOKEN')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+
+# Make sure the bot runs with the token from the environment
+if TOKEN:
+    bot.run(TOKEN)
+else:
+    print("Error: BOT_TOKEN environment variable not set!")
 
 # Make sure the bot runs with the token from the environment
 if TOKEN:
