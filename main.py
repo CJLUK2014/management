@@ -293,4 +293,32 @@ async def poll(ctx, question: str, *options):
     poll_message = await ctx.send(embed=embed)
     for i in range(len(options)):
         await poll_message.add_reaction(reactions[i])
-    await
+    await ctx.message.delete(delay=1)
+
+@bot.command()
+async def commands(ctx):
+    help_embed = discord.Embed(title="Bot Commands", color=discord.Color.blurple())
+    help_embed.add_field(name="!!team", value="Shows the list of registered team members.", inline=False)
+    help_embed.add_field(name="!!checkorder <id>", value="Checks the details and status of a specific order.", inline=False)
+    help_embed.add_field(name="!!finishorder <id>", value="Marks an order as completed. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!whoisworking", value="Shows who is currently assigned to incomplete orders.", inline=False)
+    help_embed.add_field(name="!!addnote <order_id> <note>", value="Adds a note to a specific order. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!shoutout <member> <message>", value="Give a shoutout to a team member!", inline=False)
+    help_embed.add_field(name="!!mypage", value="See your own team profile.", inline=False)
+    help_embed.add_field(name="!!clear <amount>", value="Clear a certain amount of messages. **Requires Manage Messages permission.**", inline=False)
+    help_embed.add_field(name="!!serverinfo", value="Get information about the current server.", inline=False)
+    help_embed.add_field(name="!!poll <question> <option1> <option2> ...", value="Create a simple poll with reactions.", inline=False)
+    help_embed.add_field(name="!!say <message>", value="Makes the bot say the message and deletes your command.", inline=False)
+    help_embed.add_field(name="!!register <member> <role>", value="Registers a member as part of the team. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!unregister <member>", value="Unregisters a member from the team. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!addorder <id> <order_type> <description> [deadline]", value="Adds a new order to the system. You can optionally add a deadline (e.g., 2025-04-15). **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!orderstatus <id> <status>", value="Updates the status of an existing order. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!assignorder <id> <member>", value="Assigns an order to a specific team member. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!announcement <channel_id> <message>", value="Sends an announcement to a specific channel. **Requires Manage Server permission.**", inline=False)
+    help_embed.add_field(name="!!commands", value="Shows this list of commands.", inline=False)
+    await ctx.send(embed=help_embed)
+
+load_dotenv()
+TOKEN = os.getenv('BOT_TOKEN')
+
+bot.run(TOKEN)
